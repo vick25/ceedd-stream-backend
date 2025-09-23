@@ -29,20 +29,38 @@ DEBUG = config('DJANGO_DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+
 # Application definition
 
-INSTALLED_APPS = [
+DJANGO_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
 ]
+
+THIRD_PARTY_APPS = [
+    'leaflet',
+    'rest_framework',
+    'rest_framework_gis',
+    'corsheaders',
+]
+
+LOCAL_APPS = [
+    'ceedd_stream.apps.CeeddStreamConfig',
+]
+
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -105,7 +123,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Kinshasa'
 
 USE_I18N = True
 
@@ -121,3 +139,31 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LEAFLET_CONFIG = {
+    'DEFAULT_CENTER': (-3, 21),
+    'DEFAULT_ZOOM': 4,
+    'MAX_ZOOM': 20,
+    'SCALE': 'metric',
+    'ATTRIBUTION_PREFIX': 'Crrebac CBCIS Map',
+    'TILES': [
+        (
+            'OpenStreetMap',
+            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            {
+                'attribution': '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }
+        ),
+        (
+            'OpenStreetMap Black and White',
+            'https://tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png',
+            {
+                'attribution': 'Wikimedia Labs'
+            }
+        ),
+    ],
+}
+
+REST_FRAMEWORK = {
+
+}
