@@ -93,11 +93,14 @@ WSGI_APPLICATION = 'ceedd_stream_api.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': config('POSTGRES_ENGINE', default='django.db.backends.sqlite3'),
+        'NAME': config('POSTGRES_DB', default=BASE_DIR / 'db.sqlite3'),
+        'USER': config('POSTGRES_USER', default='root'),
+        'PASSWORD': config('POSTGRES_PASSWORD', default='password'),
+        'HOST': config('PG_HOST', default='localhost'),
+        'PORT': config('PG_PORT', default='5432', cast=int),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
