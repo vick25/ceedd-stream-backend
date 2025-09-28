@@ -1,0 +1,31 @@
+FROM python:3.13.5-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+RUN mkdir -p /postgres_data
+
+RUN apt-get update && apt-get install -y \
+    gcc netcat-openbsd\
+    build-essential \
+    libpq-dev \
+    postgresql \
+    && apt-get clean 
+
+# Setup GDAL
+RUN apt-get update && \
+    apt-get install -y binutils libproj-dev gdal-bin libgdal-dev
+
+COPY requirements.txt .
+
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+COPY wait-for-db.sh /wait-for-db.sh
+RUN chmod +x /wait-for-db.sh
+
+CMD ["./wait-for-db.sh", "pg", "python", "manage.py", "runserver", "0.0.0.0:8000"]
