@@ -71,7 +71,7 @@ class Infrastructure(models.Model):
 
 
 class Finance(models.Model):
-    bailleur = models.ForeignKey(Bailleur, on_delete=models.CASCADE)
+    bailleur = models.ForeignKey(Bailleur, related_name="finances",  on_delete=models.CASCADE)
     infrastructure = models.ForeignKey(Infrastructure, on_delete=models.CASCADE)
     date_financement = models.DateTimeField(default=timezone.now)
     montant = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
