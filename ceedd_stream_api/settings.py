@@ -144,24 +144,17 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LEAFLET_CONFIG = {
-    'DEFAULT_CENTER': (-3, 21),
+    'DEFAULT_CENTER': (-3.9057992, 21.4266618),
     'DEFAULT_ZOOM': 4,
     'MAX_ZOOM': 20,
     'SCALE': 'metric',
-    'ATTRIBUTION_PREFIX': 'Crrebac CBCIS Map',
+    'ATTRIBUTION_PREFIX': 'CEEDD Stream Map',
     'TILES': [
         (
             'OpenStreetMap',
             'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
             {
                 'attribution': '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            }
-        ),
-        (
-            'OpenStreetMap Black and White',
-            'https://tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png',
-            {
-                'attribution': 'Wikimedia Labs'
             }
         ),
     ],
