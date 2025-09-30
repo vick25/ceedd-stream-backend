@@ -1,6 +1,10 @@
 from django.contrib import admin
 from .models import ZoneContributive, Bailleur, TypeInfrastructure, Client, Infrastructure, Finance, Inspection, Photo
 
+admin.site.site_header = "CEEDD Stream Backend Administration"
+admin.site.site_title = "CEEDD Stream Admin Portal"
+admin.site.index_title = "Welcome to CEEDD Stream Admin Portal"
+
 # Register your models here.
 @admin.register(ZoneContributive)
 class ZoneContributiveAdmin(admin.ModelAdmin):
