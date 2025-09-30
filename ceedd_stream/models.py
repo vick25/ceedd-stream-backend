@@ -10,6 +10,7 @@ class ZoneContributive(models.Model):
         choices=[('actif', 'Actif'), ('stable', 'Stable')],
         blank=True
     )
+    description = models.TextField(blank=True)
     geom = models.PolygonField(srid=4326, null=True, blank=True)
     shapefile_id = models.IntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -57,7 +58,7 @@ class Infrastructure(models.Model):
     capacite = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
     unite = models.CharField(max_length=20, blank=True)
     date_construction = models.DateField(null=True, blank=True)
-    location = models.PointField()(srid=4326, null=True, blank=True)
+    location = models.PointField(srid=4326, null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
     type_infrastructure = models.ForeignKey(TypeInfrastructure, null=True, blank=True, on_delete=models.SET_NULL)
