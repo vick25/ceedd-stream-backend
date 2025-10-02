@@ -49,6 +49,7 @@ THIRD_PARTY_APPS = [
     'rest_framework',
     'rest_framework_gis',
     'corsheaders',
+    'drf_yasg',
 ]
 
 LOCAL_APPS = [
@@ -95,7 +96,7 @@ DATABASES = {
     'default': {
         'ENGINE': config('POSTGRES_ENGINE', default='django.db.backends.sqlite3'),
         'NAME': config('POSTGRES_DB', default=BASE_DIR / 'db.sqlite3'),
-        'USER': config('POSTGRES_USER', default='root'),
+        'USER': config('POSTGRES_USER', default='postgres'),
         'PASSWORD': config('POSTGRES_PASSWORD', default='password'),
         'HOST': config('PG_HOST', default='localhost'),
         'PORT': config('PG_PORT', default='5432', cast=int),
@@ -161,5 +162,6 @@ LEAFLET_CONFIG = {
 }
 
 REST_FRAMEWORK = {
-
+    'DEFAULT_PAGINATION_CLASS':'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 15,
 }
