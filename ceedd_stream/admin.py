@@ -11,7 +11,8 @@ admin.site.index_title = "Welcome to CEEDD Stream Admin Portal"
 class ZoneContributiveAdmin(LeafletGeoAdmin):
     list_display = ('nom', 'description', 'created_at', 'updated_at')
     search_fields = ('nom', 'description')
-    ordering = ('nom',)
+    ordering = ('-updated_at',)
+    list_display_links = ('nom',)
 
 admin.site.register(Bailleur)
 admin.site.register(TypeInfrastructure)
