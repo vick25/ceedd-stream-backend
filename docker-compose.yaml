@@ -19,7 +19,7 @@ services:
       - crrebacweb
   # postgres-db:
   #   container_name: postgres-db
-  #   image: postgis/postgis:17-3.4
+  #   image: postgis/postgis:17-3.6-alpine
   #   restart: on-failure
   #   volumes:
   #     - postgres_data:/var/lib/postgresql/data
