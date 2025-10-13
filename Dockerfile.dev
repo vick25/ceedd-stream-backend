@@ -5,27 +5,32 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-RUN mkdir -p /postgres_data
-
-RUN apt-get update && apt-get install -y \
-    gcc netcat-openbsd\
+# Install system dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    gcc \
+    netcat-openbsd \
     build-essential \
     libpq-dev \
-    postgresql \
-    && apt-get clean 
+    binutils \
+    libproj-dev \
+    gdal-bin \
+    libgdal-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Setup GDAL
-RUN apt-get update && \
-    apt-get install -y binutils libproj-dev gdal-bin libgdal-dev
-
+# Copy requirements and install Python dependencies
 COPY requirements.txt .
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
-RUN pip install --upgrade pip
-RUN pip install --no-cache-dir -r requirements.txt
-
+# Copy project files
 COPY . .
 
 COPY wait-for-db.sh /wait-for-db.sh
+
+# Make wait-for-db.sh executable
 RUN chmod +x /wait-for-db.sh
 
-CMD ["./wait-for-db.sh", "pg", "python", "manage.py", "runserver", "0.0.0.0:8000"]
+RUN python manage.py collectstatic --noinput
+
+CMD ["./wait-for-db.sh", "pg", "sh", "-c", "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]

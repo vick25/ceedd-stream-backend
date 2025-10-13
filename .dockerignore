@@ -30,6 +30,7 @@ env
 
 docker-compose.override.yml
 *.dev
+Dockerfile
 docker-compose*
 # Keep text files except requirements.txt
 !requirements.txt

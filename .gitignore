@@ -226,3 +226,6 @@ __marimo__/
 *.db
 
 static*/
+docker-compose*.yml
+docker-compose*.yaml
+Dockerfile*
