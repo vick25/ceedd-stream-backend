@@ -69,6 +69,13 @@ class Infrastructure(models.Model):
 
     def __str__(self):
         return self.nom or f"Infrastructure {self.id}"
+    
+    def save(self, *args, **kwargs):
+        if self.latitude and self.longitude:
+            from django.contrib.gis.geos import Point
+            self.location = Point(float(self.longitude), float(self.latitude), srid=4326)
+        super().save(*args, **kwargs)
+
 
 
 class Finance(models.Model):
