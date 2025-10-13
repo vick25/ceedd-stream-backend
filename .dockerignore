@@ -23,8 +23,13 @@ npm-debug.log
 staticfiles
 media
 venv
+env
 .venv
 .idea
 .vscode
 
 docker-compose.override.yml
+*.dev
+docker-compose*
+# Keep text files except requirements.txt
+!requirements.txt

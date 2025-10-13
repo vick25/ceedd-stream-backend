@@ -149,6 +149,8 @@ activemq-data/
 
 # Environments
 .env
+.env.prod
+.env.local
 .envrc
 .venv
 env/
@@ -222,3 +224,5 @@ __marimo__/
 *.sql
 *.sqlite3
 *.db
+
+static*/
