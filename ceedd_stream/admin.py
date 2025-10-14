@@ -17,17 +17,33 @@ class ZoneContributiveAdmin(LeafletGeoAdmin):
     ordering = ('-updated_at',)
     list_display_links = ('nom',)
 
-admin.site.register(Bailleur)
-admin.site.register(TypeInfrastructure)
-admin.site.register(Client)
+class BailleurAdmin(admin.ModelAdmin):
+    list_display = ('nom', 'created_at', 'updated_at')
+    search_fields = ('nom',)
+    ordering = ('-updated_at',)
+admin.site.register(Bailleur, BailleurAdmin)
+
+class TypeInfrastructureAdmin(admin.ModelAdmin):
+    list_display = ('nom', 'description', 'created_at', 'updated_at')
+    search_fields = ('nom', 'description')
+    ordering = ('-updated_at',)
+admin.site.register(TypeInfrastructure, TypeInfrastructureAdmin)
+
+class ClientAdmin(admin.ModelAdmin):
+    list_display = ('nom', 'postnom', 'prenom', 'quartier', 'commune', 'created_at', 'updated_at')
+    search_fields = ('nom', 'postnom', 'prenom', 'quartier', 'commune')
+    ordering = ('-updated_at',)
+    list_display_links = ('nom', 'prenom')
+    list_per_page = 10
+admin.site.register(Client, ClientAdmin)
 
 class LocationAdminForm(forms.ModelForm):
     class Meta:
         model = Infrastructure
         fields = '__all__'
-        widgets = {
-            'location': LeafletWidget(attrs={'map_width': '800px', 'map_height': '100%'}),
-        }
+        # widgets = {
+        #     'location': LeafletWidget(),
+        # }
 
     def clean(self):
         cleaned_data = super().clean()
@@ -53,10 +69,25 @@ class InfrastructureAdmin(LeafletGeoAdmin):
     list_display = ('nom', 'type_infrastructure', 'client', 'zone', 'created_at', 'updated_at')
     search_fields = ('nom', 'type_infrastructure__nom', 'client__nom', 'zone__nom')
     ordering = ('-updated_at',)
-    list_display_links = ('client',)
-    list_filter = ('type_infrastructure', 'client', 'zone')
+    list_display_links = ('nom', 'client__nom')
+    list_filter = ('type_infrastructure', 'zone')
 
-admin.site.register(Finance)
-admin.site.register(Inspection)
-admin.site.register(Photo)
+class FinanceAdmin(admin.ModelAdmin):
+    list_display = ('infrastructure', 'bailleur', 'montant', 'date_financement')
+    search_fields = ('infrastructure__nom', 'bailleur__nom')
+    ordering = ('-date_financement',)
+admin.site.register(Finance, FinanceAdmin)
+
+class InspectionAdmin(admin.ModelAdmin):
+    list_display = ('infrastructure', 'date', 'etat', 'inspecteur', 'created_at', 'updated_at')
+    search_fields = ('infrastructure__nom', 'inspecteur')
+    ordering = ('-updated_at',)
+    list_filter = ('etat',)
+admin.site.register(Inspection, InspectionAdmin)
+
+class PhotoAdmin(admin.ModelAdmin):
+    list_display = ('entite_type', 'entite_id', 'url', 'date_prise', 'created_at', 'updated_at')
+    search_fields = ('entite_type', 'url')
+admin.site.register(Photo, PhotoAdmin)
+
 #admin.site.register(Role)
