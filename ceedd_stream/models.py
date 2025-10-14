@@ -22,6 +22,7 @@ class ZoneContributive(models.Model):
 
 class Bailleur(models.Model):
     nom = models.CharField(max_length=255)
+    sigle = models.CharField(max_length=50, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -31,7 +32,7 @@ class Bailleur(models.Model):
 
 class TypeInfrastructure(models.Model):
     nom = models.CharField(max_length=255, unique=True)
-    symbole = models.BinaryField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -41,11 +42,15 @@ class TypeInfrastructure(models.Model):
 
 class Client(models.Model):
     nom = models.CharField(max_length=255, blank=True)
-    prenom = models.CharField(max_length=255, blank=True)
+    postnom = models.CharField(max_length=255, null=True, blank=True)
+    prenom = models.CharField(max_length=255, null=True, blank=True)
     sexe = models.CharField(max_length=1, choices=[('M', 'Masculin'), ('F', 'Féminin')], blank=True)
-    avenue = models.CharField(max_length=255, blank=True)
-    quartier = models.CharField(max_length=255, blank=True)
-    commune = models.CharField(max_length=255, blank=True)
+    avenue = models.CharField(max_length=255, null=True, blank=True)
+    quartier = models.CharField(max_length=255, null=True, blank=True)
+    numero = models.IntegerField(null=True, blank=True)
+    telephone = models.CharField(max_length=20, null=True, blank=True)
+    email = models.EmailField(max_length=255, null=True, blank=True)
+    commune = models.CharField(max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -81,8 +86,11 @@ class Infrastructure(models.Model):
 class Finance(models.Model):
     bailleur = models.ForeignKey(Bailleur, related_name="finances",  on_delete=models.CASCADE)
     infrastructure = models.ForeignKey(Infrastructure, on_delete=models.CASCADE)
-    date_financement = models.DateTimeField(default=timezone.now)
+    date_financement = models.DateTimeField(default=timezone.now, null=True, blank=True)
     montant = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+    unite_monnaie = models.CharField(max_length=10,
+                                     choices=[('Fc', 'Franc Congolais'), ('$', 'Dollars US'), ('€', 'Euros')],
+                                     default='Fc', null=True, blank=True)
 
     class Meta:
         unique_together = ('bailleur', 'infrastructure')
@@ -93,13 +101,13 @@ class Finance(models.Model):
 
 class Inspection(models.Model):
     infrastructure = models.ForeignKey(Infrastructure, on_delete=models.CASCADE, related_name="inspections")
-    date = models.DateTimeField(default=timezone.now)
+    date = models.DateTimeField(default=timezone.now, null=True, blank=True)
     etat = models.CharField(
         max_length=50,
         choices=[('bon', 'Bon'), ('moyen', 'Moyen'), ('mauvais', 'Mauvais')]
     )
-    inspecteur = models.CharField(max_length=255, blank=True)
-    commentaire = models.TextField(blank=True)
+    inspecteur = models.CharField(max_length=255, null=True, blank=True)
+    commentaire = models.TextField(null=True, blank=True)
     prochain_controle = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -111,6 +119,7 @@ class Inspection(models.Model):
 class Photo(models.Model):
     ENTITE_CHOICES = [
         ('infrastructure', 'Infrastructure'),
+        ('type_infrastructure', 'Type Infrastructure'),
         ('bailleur', 'Bailleur'),
         ('zone_contributive', 'Zone contributive'),
         ('inspection', 'Inspection'),
@@ -133,7 +142,7 @@ class Role(models.Model):
         ('contributeur', 'Contributeur'),
         ('lecteur', 'Lecteur'),
     ]
-    role = models.CharField(max_length=20, choices=ROLES, unique=True)
+    role = models.CharField(max_length=20, choices=ROLES, unique=True, default='lecteur')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
