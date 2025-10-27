@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import permissions
+from rest_framework_simplejwt import views as jwt_views
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
@@ -42,6 +43,10 @@ urlpatterns = [
 
 urlpatterns += [
     path('admin/', admin.site.urls),
+
+    # Authentication endpoints
+    path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
     
     # API endpoints
     path('api/v1/', include('ceedd_stream.urls')),
