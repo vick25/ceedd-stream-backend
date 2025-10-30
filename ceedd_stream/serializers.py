@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
@@ -31,6 +32,8 @@ class FinanceSerializer(serializers.ModelSerializer):
 
 class InfrastructureSerializer(serializers.ModelSerializer):
     finances = BailleurSerializer(many=True, read_only=True)
+    client = ClientSerializer(read_only=True)
+    type_infrastructure = TypeInfrastructureSerializer(read_only=True)
     class Meta:
         model = Infrastructure
         fields = '__all__'
@@ -44,3 +47,13 @@ class PhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Photo
         fields = '__all__'
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'password']
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        user = User.objects.create_user(**validated_data)
+        return user

@@ -1,13 +1,15 @@
-from django.shortcuts import render
+from django.contrib.auth.models import User
 from .models import ZoneContributive, Bailleur, TypeInfrastructure, Client, Infrastructure, Finance, Inspection, Photo
-from .serializers import ZoneContributiveSerializer, BailleurSerializer, TypeInfrastructureSerializer, ClientSerializer, InfrastructureSerializer, FinanceSerializer, InspectionSerializer, PhotoSerializer
-from rest_framework import viewsets
+from .serializers import UserSerializer, ZoneContributiveSerializer, BailleurSerializer, TypeInfrastructureSerializer, ClientSerializer, InfrastructureSerializer, FinanceSerializer, InspectionSerializer, PhotoSerializer
+from rest_framework import viewsets, generics
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly
 
 
 # Create your views here.
 class ZoneContributiveViewSet(viewsets.ModelViewSet):
     queryset = ZoneContributive.objects.all()
     serializer_class = ZoneContributiveSerializer
+    permission_classes = [IsAuthenticated]
     lookup_field = 'pk'
     #filterset_fields = ['nom', 'description']
     #search_fields = ['nom', 'description']
@@ -38,6 +40,7 @@ class FinanceViewSet(viewsets.ModelViewSet):
 class InfrastructureViewSet(viewsets.ModelViewSet):
     queryset = Infrastructure.objects.all()
     serializer_class = InfrastructureSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
     lookup_field = 'pk'
 
 class InspectionViewSet(viewsets.ModelViewSet):
@@ -49,3 +52,8 @@ class PhotoViewSet(viewsets.ModelViewSet):
     queryset = Photo.objects.all()
     serializer_class = PhotoSerializer
     lookup_field = 'pk'
+
+class UserCreateView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]
