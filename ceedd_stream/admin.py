@@ -66,20 +66,20 @@ class LocationAdminForm(forms.ModelForm):
 @admin.register(Infrastructure)
 class InfrastructureAdmin(LeafletGeoAdmin):
     form = LocationAdminForm
-    list_display = ('nom', 'type_infrastructure', 'client', 'zone', 'created_at', 'updated_at')
+    list_display = ('nom', 'type_infrastructure__nom', 'client__nom', 'zone__nom', 'created_at', 'updated_at')
     search_fields = ('nom', 'type_infrastructure__nom', 'client__nom', 'zone__nom')
     ordering = ('-updated_at',)
     list_display_links = ('nom', 'client__nom')
     list_filter = ('type_infrastructure', 'zone')
 
 class FinanceAdmin(admin.ModelAdmin):
-    list_display = ('infrastructure', 'bailleur', 'montant', 'date_financement')
+    list_display = ('infrastructure__nom', 'bailleur__nom', 'montant', 'date_financement')
     search_fields = ('infrastructure__nom', 'bailleur__nom')
     ordering = ('-date_financement',)
 admin.site.register(Finance, FinanceAdmin)
 
 class InspectionAdmin(admin.ModelAdmin):
-    list_display = ('infrastructure', 'date', 'etat', 'inspecteur', 'created_at', 'updated_at')
+    list_display = ('infrastructure__nom', 'date', 'etat', 'inspecteur', 'created_at', 'updated_at')
     search_fields = ('infrastructure__nom', 'inspecteur')
     ordering = ('-updated_at',)
     list_filter = ('etat',)
