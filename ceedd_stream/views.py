@@ -1,7 +1,8 @@
 from django.contrib.auth.models import User
 from .models import ZoneContributive, Bailleur, TypeInfrastructure, Client, Infrastructure, Finance, Inspection, Photo
 from .serializers import UserSerializer, ZoneContributiveSerializer, BailleurSerializer, TypeInfrastructureSerializer, ClientSerializer, InfrastructureSerializer, FinanceSerializer, InspectionSerializer, PhotoSerializer
-from rest_framework import viewsets, generics
+from rest_framework import viewsets, generics, status
+from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework_simplejwt.views import TokenObtainPairView
 
@@ -76,8 +77,16 @@ class UserRetrieveView(generics.RetrieveAPIView):
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
-        user = self.user
-        serializer = UserSerializer(user)
-        response.data['user'] = serializer.data
-        return response
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user = serializer.user
+        user_data = UserSerializer(user).data
+
+        tokens = serializer.validated_data
+
+        return Response({
+            "refresh": tokens["refresh"],
+            "access": tokens["access"],
+            "user": user_data
+        })

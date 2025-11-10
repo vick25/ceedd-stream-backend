@@ -1,18 +1,25 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from . import views
+from .views import (
+    ZoneContributiveViewSet,
+    BailleurViewSet,
+    TypeInfrastructureViewSet,
+    ClientViewSet,
+    InfrastructureViewSet,
+    FinanceViewSet,
+    InspectionViewSet,
+    PhotoViewSet
+)
 
 router = DefaultRouter()
-router.register(r'zonecontributive', views.ZoneContributiveViewSet, basename='zonecontributive')
-router.register(r'bailleur', views.BailleurViewSet, basename='bailleur')
-router.register(r'typeinfrastructure', views.TypeInfrastructureViewSet, basename='typeinfrastructure')
-router.register(r'client', views.ClientViewSet, basename='client')
-router.register(r'finance', views.FinanceViewSet, basename='finance')
-router.register(r'infrastructure', views.InfrastructureViewSet, basename='infrastructure')
-router.register(r'inspection', views.InspectionViewSet, basename='inspection')
-router.register(r'photo', views.PhotoViewSet, basename='photo')
-#router.register(r'role', views.RoleViewSet, basename='role')
-#router.register(r'utilisateur', views.UtilisateurViewSet, basename='utilisateur')
+router.register(r'zones', ZoneContributiveViewSet, basename='zonecontributive')
+router.register(r'bailleurs', BailleurViewSet, basename='bailleur')
+router.register(r'types-infrastructure', TypeInfrastructureViewSet, basename='typeinfrastructure')
+router.register(r'clients', ClientViewSet, basename='client')
+router.register(r'infrastructures', InfrastructureViewSet, basename='infrastructure')
+router.register(r'finances', FinanceViewSet, basename='finance')
+router.register(r'inspections', InspectionViewSet, basename='inspection')
+router.register(r'photos', PhotoViewSet, basename='photo')
 
 urlpatterns = [
     path('', include(router.urls)),
