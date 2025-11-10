@@ -4,7 +4,7 @@ from rest_framework import permissions
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-from ceedd_stream.views import UserCreateView
+from ceedd_stream.views import UserCreateView, UserRetrieveView, CustomTokenObtainPairView
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -26,16 +26,17 @@ urlpatterns = [
 ]
 
 urlpatterns += [
-    path('admin/', admin.site.urls),
+   path('admin/', admin.site.urls),
 
-    # User endpoints
-    path('api/users/register/', UserCreateView.as_view(), name='register'),
+   # User endpoints
+   path('api/users/register/', UserCreateView.as_view(), name='register'),
+   path('api/users/<int:pk>/', UserRetrieveView.as_view(), name='user-detail'),
 
-    # Authentication endpoints
-    path('api/token/', TokenObtainPairView.as_view(), name='get_token'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='refresh_token'),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    
-    # API endpoints
-    path('api/v1/', include('ceedd_stream.urls')),
+   # Authentication endpoints
+   path('api/token/', CustomTokenObtainPairView.as_view(), name='get_token'),
+   path('api/token/refresh/', TokenRefreshView.as_view(), name='refresh_token'),
+   path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+   
+   # API endpoints
+   path('api/v1/', include('ceedd_stream.urls')),
 ]
