@@ -74,17 +74,17 @@ class Infrastructure(models.Model):
 
     def __str__(self):
         return self.nom or f"Infrastructure {self.id}"
-    
+
     def save(self, *args, **kwargs):
-        if self.latitude and self.longitude:
+        if self.location is None and self.latitude is not None and self.longitude is not None:
             from django.contrib.gis.geos import Point
-            self.location = Point(float(self.longitude), float(self.latitude), srid=4326)
+            self.location = Point(self.longitude, self.latitude, srid=4326)
         super().save(*args, **kwargs)
 
 
 
 class Finance(models.Model):
-    bailleur = models.ForeignKey(Bailleur, related_name="finances",  on_delete=models.CASCADE)
+    bailleur = models.ForeignKey(Bailleur, related_name="finances", on_delete=models.CASCADE)
     infrastructure = models.ForeignKey(Infrastructure, on_delete=models.CASCADE)
     date_financement = models.DateTimeField(default=timezone.now, null=True, blank=True)
     montant = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
@@ -104,7 +104,8 @@ class Inspection(models.Model):
     date = models.DateTimeField(default=timezone.now, null=True, blank=True)
     etat = models.CharField(
         max_length=50,
-        choices=[('bon', 'Bon'), ('moyen', 'Moyen'), ('mauvais', 'Mauvais')]
+        choices=[('bon', 'Bon'), ('moyen', 'Moyen'), ('mauvais', 'Mauvais')],
+        default='bon', null=True, blank=True
     )
     inspecteur = models.CharField(max_length=255, null=True, blank=True)
     commentaire = models.TextField(null=True, blank=True)
@@ -117,45 +118,43 @@ class Inspection(models.Model):
 
 
 class Photo(models.Model):
-    ENTITE_CHOICES = [
-        ('infrastructure', 'Infrastructure'),
-        ('type_infrastructure', 'Type Infrastructure'),
-        ('bailleur', 'Bailleur'),
-        ('zone_contributive', 'Zone contributive'),
-        ('inspection', 'Inspection'),
-    ]
-    entite_type = models.CharField(max_length=50, choices=ENTITE_CHOICES)
-    entite_id = models.IntegerField()
+    # Fields for generic relation
+    from django.contrib.contenttypes.fields import GenericForeignKey
+    from django.contrib.contenttypes.models import ContentType
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE) # which model
+    object_id = models.PositiveIntegerField() # which row inside that model
+    content_object = GenericForeignKey('content_type', 'object_id') # actual object like Infrastructure(id=12)
+
     url = models.TextField()
-    description = models.TextField(blank=True)
+    description = models.TextField(null=True, blank=True)
     date_prise = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.entite_type} #{self.entite_id}"
+        return f"Photo for {self.content_object}"
 
 
-class Role(models.Model):
-    ROLES = [
-        ('admin', 'Admin'),
-        ('contributeur', 'Contributeur'),
-        ('lecteur', 'Lecteur'),
-    ]
-    role = models.CharField(max_length=20, choices=ROLES, unique=True, default='lecteur')
-    created_at = models.DateTimeField(auto_now_add=True)
+# class Role(models.Model):
+#     ROLES = [
+#         ('admin', 'Admin'),
+#         ('contributeur', 'Contributeur'),
+#         ('lecteur', 'Lecteur'),
+#     ]
+#     role = models.CharField(max_length=20, choices=ROLES, unique=True, default='lecteur')
+#     created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return self.role
+#     def __str__(self):
+#         return self.role
 
 
-class Utilisateur(models.Model):
-    nom = models.CharField(max_length=255)
-    email = models.EmailField(unique=True)
-    mot_de_passe = models.TextField()
-    role = models.ForeignKey(Role, null=True, blank=True, on_delete=models.SET_NULL)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+# class Utilisateur(models.Model):
+#     nom = models.CharField(max_length=255)
+#     email = models.EmailField(unique=True)
+#     mot_de_passe = models.TextField()
+#     role = models.ForeignKey(Role, null=True, blank=True, on_delete=models.SET_NULL)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return self.email
+#     def __str__(self):
+#         return self.email
