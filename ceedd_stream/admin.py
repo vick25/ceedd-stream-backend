@@ -86,8 +86,10 @@ class InspectionAdmin(admin.ModelAdmin):
 admin.site.register(Inspection, InspectionAdmin)
 
 class PhotoAdmin(admin.ModelAdmin):
-    list_display = ('entite_type', 'entite_id', 'url', 'date_prise', 'created_at', 'updated_at')
-    search_fields = ('entite_type', 'url')
+    list_display = ('content_object', 'url', 'date_prise', 'created_at')
+    search_fields = ('url', 'description')
+    list_filter = ('content_type',)
+    readonly_fields = ('content_type', 'object_id', 'content_object')
 admin.site.register(Photo, PhotoAdmin)
 
 #admin.site.register(Role)
