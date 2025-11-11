@@ -34,3 +34,7 @@ Dockerfile
 docker-compose*
 # Keep text files except requirements.txt
 !requirements.txt
+
+# Http Rest
+*.http
+*.rest
