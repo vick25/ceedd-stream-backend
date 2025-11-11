@@ -121,8 +121,8 @@ class Photo(models.Model):
     # Fields for generic relation
     from django.contrib.contenttypes.fields import GenericForeignKey
     from django.contrib.contenttypes.models import ContentType
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True) # which model
-    object_id = models.PositiveIntegerField(null=True) # which row inside that model
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE) # which model
+    object_id = models.PositiveIntegerField() # which row inside that model
     content_object = GenericForeignKey('content_type', 'object_id') # actual object like Infrastructure(id=12)
 
     url = models.TextField()
