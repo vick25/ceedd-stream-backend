@@ -100,7 +100,7 @@ class PhotoSerializer(serializers.ModelSerializer):
         except ContentType.DoesNotExist:
             raise serializers.ValidationError("Invalid model_name.")
 
-        # ✅ Validate referenced object exists
+        # Validate referenced object exists
         model_class = ct.model_class()
         if not model_class.objects.filter(pk=object_id).exists():
             raise serializers.ValidationError("Referenced object does not exist.")
