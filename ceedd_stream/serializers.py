@@ -82,14 +82,32 @@ class PhotoSerializer(serializers.ModelSerializer):
         return None
 
     def create(self, validated_data):
-        model_name = self.context['request'].data.get('model_name')
-        object_id = self.context['request'].data.get('object_id')
+        request = self.context['request']
+        model_name = request.data.get('model_name')
+        object_id = request.data.get('object_id')
 
         if not model_name or not object_id:
             raise serializers.ValidationError("`model_name` and `object_id` are required to create a photo.")
 
-        validated_data['content_type'] = ContentType.objects.get(model=model_name.lower())
-        validated_data['object_id'] = object_id
+        # Whitelist allowed models
+        ALLOWED = ["infrastructure", "bailleur", "zonecontributive", "inspection"]
+        m = model_name.lower()
+        if m not in ALLOWED:
+            raise serializers.ValidationError(f"Model '{model_name}' is not allowed for photo association.")
+
+        try:
+            ct = ContentType.objects.get(model=m)
+        except ContentType.DoesNotExist:
+            raise serializers.ValidationError("Invalid model_name.")
+
+        # ✅ Validate referenced object exists
+        model_class = ct.model_class()
+        if not model_class.objects.filter(pk=object_id).exists():
+            raise serializers.ValidationError("Referenced object does not exist.")
+
+        validated_data['content_type'] = ct
+        validated_data['object_id'] = int(object_id)
+
         return super().create(validated_data)
 
 class UserSerializer(serializers.ModelSerializer):
