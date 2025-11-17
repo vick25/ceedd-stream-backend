@@ -3,7 +3,7 @@ URL configuration for ceedd_stream_api project.
 """
 from django.contrib import admin
 from django.urls import path, include
-from ceedd_stream.views import UserCreateView, UserRetrieveView, CustomTokenObtainPairView
+from ceedd_stream.views import UserCreateView, UserRetrieveView, CustomTokenObtainPairView, get_volume_by_date, get_volume_by_filters
 from rest_framework_simplejwt.views import TokenRefreshView
 
 from drf_yasg.views import get_schema_view
@@ -44,4 +44,8 @@ urlpatterns += [
 
    # API endpoints
    path('api/v1/', include('ceedd_stream.urls')),
+
+   # Stats
+   path('api/infras/volume', get_volume_by_filters, name='get_volume_by_filters'),
+   path('api/infras/volume_by_date', get_volume_by_date, name='get_volume_by_date'),
 ]
