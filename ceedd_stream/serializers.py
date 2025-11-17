@@ -47,6 +47,7 @@ class InfrastructureSerializer(serializers.ModelSerializer):
 
 class ZoneContributiveSerializer(GeoFeatureModelSerializer):
     infrastructures = InfrastructureSerializer(many=True, source='infrastructure_set')
+    infrastructures_count = serializers.IntegerField(source='infrastructure_set.count', read_only=True)
     class Meta:
         model = ZoneContributive
         geo_field = "geom"
