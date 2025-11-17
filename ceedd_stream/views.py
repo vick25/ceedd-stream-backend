@@ -9,6 +9,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.decorators import api_view
 from django.db.models import Sum
 from datetime import datetime
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 
 # Create your views here.
@@ -103,7 +105,25 @@ Par exemple, si on veut connaitre le nombre ou volume des citernes de tel quarti
 /api/infras/volume?commune=Mont-Ngafula
 /api/infras/volume?avenue=Mulamba&quartier=Kimbondo
 '''
-@api_view(['GET'])
+@swagger_auto_schema(
+    method='get',
+    manual_parameters=[
+        openapi.Parameter('avenue', openapi.IN_QUERY, required=False, description="Filter by avenue (contains, case-insensitive)", type=openapi.TYPE_STRING),
+        openapi.Parameter('quartier', openapi.IN_QUERY, required=False, description="Filter by quartier", type=openapi.TYPE_STRING),
+        openapi.Parameter('commune', openapi.IN_QUERY, required=False, description="Filter by commune", type=openapi.TYPE_STRING),
+    ],
+    responses={
+        200: openapi.Response(
+            description="Success",
+            examples={"application/json": {"total_volume": 1500.50}}
+        ),
+        404: openapi.Response(
+            description="Not Found",
+            examples={"application/json": {"message": "No infrastructures found matching the criteria"}}
+        )
+    }
+)
+@api_view(http_method_names=['GET'])
 def get_volume_by_filters(request):
     avenue = request.query_params.get("avenue")
     quartier = request.query_params.get("quartier")
@@ -139,7 +159,64 @@ si on veut connaitre le nombre ou volume des citernes construites au 3 e trimest
 /api/infras/volume_by_date?month=1
 /api/infras/volume_by_date?date_from=2023-01-01&date_to=2023-09-30
 '''
-@api_view(['GET'])
+@swagger_auto_schema(
+    method='get',
+    manual_parameters=[
+        openapi.Parameter(
+            name='year',
+            in_=openapi.IN_QUERY,
+            description="Filter by year of construction",
+            type=openapi.TYPE_INTEGER
+        ),
+        openapi.Parameter(
+            name='month',
+            in_=openapi.IN_QUERY,
+            description="Filter by month of construction (1–12)",
+            type=openapi.TYPE_INTEGER
+        ),
+        openapi.Parameter(
+            name='trimester',
+            in_=openapi.IN_QUERY,
+            description="Filter by trimester of construction (1–4)",
+            type=openapi.TYPE_INTEGER
+        ),
+        openapi.Parameter(
+            name='semester',
+            in_=openapi.IN_QUERY,
+            description="Filter by semester of construction (1–2)",
+            type=openapi.TYPE_INTEGER
+        ),
+        openapi.Parameter(
+            name='date_from',
+            in_=openapi.IN_QUERY,
+            description="Start date (YYYY-MM-DD)",
+            type=openapi.TYPE_STRING,
+            format=openapi.FORMAT_DATE
+        ),
+        openapi.Parameter(
+            name='date_to',
+            in_=openapi.IN_QUERY,
+            description="End date (YYYY-MM-DD)",
+            type=openapi.TYPE_STRING,
+            format=openapi.FORMAT_DATE
+        ),
+    ],
+    responses={
+        200: openapi.Response(
+            description="Successful response",
+            examples={"application/json": {"total_volume": 2500.00}}
+        ),
+        400: openapi.Response(
+            description="Bad Request",
+            examples={"application/json": {"error": "trimester must be 1–4"}}
+        ),
+        404: openapi.Response(
+            description="Not Found",
+            examples={"application/json": {"message": "No infrastructures found"}}
+        ),
+    }
+)
+@api_view(http_method_names=['GET'])
 def get_volume_by_date(request):
     qs = Infrastructure.objects.all()
 
