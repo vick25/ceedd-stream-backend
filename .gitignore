@@ -228,8 +228,7 @@ __marimo__/
 static*/
 docker-compose*.yml
 docker-compose*.yaml
-Dockerfile*
-
+Dockerfile*.dev
 # Http Rest
 *.http
 *.rest
