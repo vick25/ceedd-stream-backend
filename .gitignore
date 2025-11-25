@@ -232,3 +232,6 @@ Dockerfile*.dev
 # Http Rest
 *.http
 *.rest
+
+# Media
+media*/
