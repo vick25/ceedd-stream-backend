@@ -12,6 +12,7 @@ from .models import (
     Finance,
     Inspection,
     Photo,
+    Shp,
 )
 
 
@@ -78,6 +79,8 @@ class ZoneContributiveSerializer(GeoFeatureModelSerializer):
 
 
 class InspectionSerializer(serializers.ModelSerializer):
+    infrastructure = InfrastructureSerializer(read_only=True)
+
     class Meta:
         model = Inspection
         fields = "__all__"
@@ -156,3 +159,9 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
+
+
+class ShpSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Shp
+        fields = "__all__"
