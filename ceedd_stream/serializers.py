@@ -79,11 +79,10 @@ class ZoneContributiveSerializer(GeoFeatureModelSerializer):
 
 
 class InspectionSerializer(serializers.ModelSerializer):
-    infrastructure = InfrastructureSerializer(read_only=True)
-
     class Meta:
         model = Inspection
         fields = "__all__"
+        depth = 1
 
 
 class PhotoSerializer(serializers.ModelSerializer):
