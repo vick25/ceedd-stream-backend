@@ -1,7 +1,8 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from django.contrib.contenttypes.models import ContentType
-from rest_framework_gis.serializers import GeoFeatureModelSerializer
+
+# from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from .models import (
     ZoneContributive,
@@ -63,7 +64,7 @@ class InfrastructureSerializer(serializers.ModelSerializer):
         return InspectionSerializer(inspections, many=True).data
 
 
-class ZoneContributiveSerializer(GeoFeatureModelSerializer):
+class ZoneContributiveSerializer(serializers.ModelSerializer):
     infrastructures = InfrastructureSerializer(
         many=True, source="infrastructure_set", read_only=True
     )
@@ -73,9 +74,9 @@ class ZoneContributiveSerializer(GeoFeatureModelSerializer):
 
     class Meta:
         model = ZoneContributive
-        geo_field = "geom"
+        # geo_field = "geom"
         fields = "__all__"
-        read_only_fields = ["geom"]
+        # read_only_fields = ["geom"]
 
 
 class InspectionSerializer(serializers.ModelSerializer):
