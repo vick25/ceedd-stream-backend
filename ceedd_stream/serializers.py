@@ -73,9 +73,9 @@ class ZoneContributiveSerializer(GeoFeatureModelSerializer):
 
     class Meta:
         model = ZoneContributive
-        geo_field = "geom"
+        # geo_field = "geom"
         fields = "__all__"
-        read_only_fields = ["geom"]
+        # read_only_fields = ["geom"]
 
 
 class InspectionSerializer(serializers.ModelSerializer):
