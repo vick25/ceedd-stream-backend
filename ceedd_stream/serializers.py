@@ -47,8 +47,8 @@ class InfrastructureSerializer(serializers.ModelSerializer):
     # finances = FinanceSerializer(many=True, read_only=True)
     client = ClientSerializer(read_only=True)
     type_infrastructure = TypeInfrastructureSerializer(read_only=True)
-    infrastructure_finances = serializers.SerializerMethodField()
-    inspections = serializers.SerializerMethodField()
+    infrastructure_finances = serializers.SerializerMethodField(read_only=True)
+    inspections = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Infrastructure
