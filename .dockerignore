@@ -38,3 +38,6 @@ docker-compose*
 # Http Rest
 *.http
 *.rest
+
+# Bash
+*.sh

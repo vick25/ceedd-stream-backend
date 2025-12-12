@@ -235,3 +235,6 @@ Dockerfile*.dev
 
 # Media
 media*/
+
+# Bash
+*.sh
