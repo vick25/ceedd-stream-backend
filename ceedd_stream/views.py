@@ -2,6 +2,7 @@ import json
 from django.contrib.auth.models import User
 from rest_framework.decorators import action
 from django.http import HttpResponse
+from django.contrib.contenttypes.models import ContentType
 import fiona
 from .models import (
     ZoneContributive,
@@ -355,6 +356,75 @@ def get_volume_by_date(request):
     total_volume = qs.aggregate(total_volume=Sum("capacite"))["total_volume"]
 
     return Response({"total_volume": total_volume}, status=status.HTTP_200_OK)
+
+
+"""
+Exemple:
+/api/photos/by-object/?model_name=infrastructure&object_id=11
+/api/photos/by-object/?model_name=bailleur&object_id=3
+/api/photos/by-object/?model_name=zonecontributive&object_id=2
+"""
+
+
+@swagger_auto_schema(
+    method="get",
+    manual_parameters=[
+        openapi.Parameter(
+            "model_name",
+            openapi.IN_QUERY,
+            required=True,
+            description="The name of the model (e.g., 'infrastructure', 'bailleur', 'zonecontributive', 'inspection').",
+            type=openapi.TYPE_STRING,
+        ),
+        openapi.Parameter(
+            "object_id",
+            openapi.IN_QUERY,
+            required=True,
+            description="The ID of the object.",
+            type=openapi.TYPE_INTEGER,
+        ),
+    ],
+    responses={
+        200: PhotoSerializer(many=True),
+        400: "Bad Request - Missing or invalid parameters.",
+        404: "Not Found - The specified object or content type does not exist.",
+    },
+)
+@api_view(http_method_names=["GET"])
+def get_photos_for_object(request):
+    """
+    Retrieves all photos associated with a specific content object,
+    identified by its model name and object ID.
+    """
+    model_name = request.query_params.get("model_name")
+    object_id = request.query_params.get("object_id")
+
+    if not model_name or not object_id:
+        return Response(
+            {"error": "`model_name` and `object_id` query parameters are required."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    try:
+        content_type = ContentType.objects.get(model=model_name.lower())
+    except ContentType.DoesNotExist:
+        return Response(
+            {"error": f"Invalid model_name: '{model_name}'."},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+
+    model_class = content_type.model_class()
+    if not model_class.objects.filter(pk=object_id).exists():
+        return Response(
+            {
+                "error": f"Object with id {object_id} for model '{model_name}' not found."
+            },
+            status=status.HTTP_404_NOT_FOUND,
+        )
+
+    photos = Photo.objects.filter(content_type=content_type, object_id=object_id)
+    serializer = PhotoSerializer(photos, many=True, context={"request": request})
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class UploadShapefileViewSet(viewsets.ModelViewSet):

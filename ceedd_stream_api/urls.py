@@ -12,6 +12,7 @@ from ceedd_stream.views import (
     CustomTokenObtainPairView,
     get_volume_by_date,
     get_volume_by_filters,
+    get_photos_for_object,
 )
 from rest_framework_simplejwt.views import TokenRefreshView
 
@@ -55,4 +56,10 @@ urlpatterns += [
     # Stats
     path("api/infras/volume", get_volume_by_filters, name="get_volume_by_filters"),
     path("api/infras/volume_by_date", get_volume_by_date, name="get_volume_by_date"),
+    # Photos by object
+    path(
+        "api/photos/by_object/",
+        get_photos_for_object,
+        name="get_photos_for_object",
+    ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

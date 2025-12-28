@@ -50,8 +50,19 @@ class InfrastructureSerializer(serializers.ModelSerializer):
     infrastructure_finances = serializers.SerializerMethodField(read_only=True)
     inspections = serializers.SerializerMethodField(read_only=True)
 
+    # Use PrimaryKeyRelatedField for write operations (POST, PUT)
+    client_id = serializers.PrimaryKeyRelatedField(
+        queryset=Client.objects.all(), source="client", write_only=True
+    )
+    type_infrastructure_id = serializers.PrimaryKeyRelatedField(
+        queryset=TypeInfrastructure.objects.all(),
+        source="type_infrastructure",
+        write_only=True,
+    )
+
     class Meta:
         model = Infrastructure
+        geo_field = "location"
         fields = "__all__"
 
     def get_infrastructure_finances(self, obj):
