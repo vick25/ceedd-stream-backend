@@ -360,9 +360,9 @@ def get_volume_by_date(request):
 
 """
 Exemple:
-/api/photos/by-object/?model_name=infrastructure&object_id=11
-/api/photos/by-object/?model_name=bailleur&object_id=3
-/api/photos/by-object/?model_name=zonecontributive&object_id=2
+/api/photos/by_object/?model_name=infrastructure&object_id=11
+/api/photos/by_object/?model_name=bailleur&object_id=3
+/api/photos/by_object/?model_name=zonecontributive&object_id=2
 """
 
 
