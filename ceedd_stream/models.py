@@ -44,7 +44,7 @@ class Bailleur(models.Model):
 
 
 class TypeInfrastructure(models.Model):
-    nom = models.CharField(max_length=255, unique=True)
+    nom = models.CharField(max_length=255, unique=True, null=False, blank=False)
     description = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -54,7 +54,7 @@ class TypeInfrastructure(models.Model):
 
 
 class Client(models.Model):
-    nom = models.CharField(max_length=255, blank=True)
+    nom = models.CharField(max_length=255, null=False, blank=False)
     postnom = models.CharField(max_length=255, null=True, blank=True)
     prenom = models.CharField(max_length=255, null=True, blank=True)
     sexe = models.CharField(
@@ -62,7 +62,7 @@ class Client(models.Model):
     )
     avenue = models.CharField(max_length=255, null=True, blank=True)
     quartier = models.CharField(max_length=255, null=True, blank=True)
-    numero = models.IntegerField(null=True, blank=True)
+    numero = models.CharField(max_length=10, null=True, blank=True)
     telephone = models.CharField(max_length=20, null=True, blank=True)
     email = models.EmailField(max_length=255, null=True, blank=True)
     commune = models.CharField(max_length=255, null=True, blank=True)
