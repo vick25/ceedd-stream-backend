@@ -57,15 +57,17 @@ class Client(models.Model):
     nom = models.CharField(max_length=255, null=False, blank=False)
     postnom = models.CharField(max_length=255, null=True, blank=True)
     prenom = models.CharField(max_length=255, null=True, blank=True)
+    titre = models.CharField(max_length=100, null=True, blank=True)
     sexe = models.CharField(
         max_length=1, choices=[("M", "Masculin"), ("F", "Féminin")], blank=True
     )
     avenue = models.CharField(max_length=255, null=True, blank=True)
-    quartier = models.CharField(max_length=255, null=True, blank=True)
     numero = models.CharField(max_length=10, null=True, blank=True)
+    quartier = models.CharField(max_length=255, null=True, blank=True)
+    commune = models.CharField(max_length=255, null=True, blank=True)
     telephone = models.CharField(max_length=20, null=True, blank=True)
     email = models.EmailField(max_length=255, null=True, blank=True)
-    commune = models.CharField(max_length=255, null=True, blank=True)
+    engagement = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -74,7 +76,10 @@ class Client(models.Model):
 
 
 class Infrastructure(models.Model):
-    nom = models.CharField(max_length=255, blank=True)
+    client = models.ForeignKey(
+        Client, null=True, blank=False, on_delete=models.SET_NULL
+    )
+    nom = models.CharField(max_length=255, null=False, blank=False, unique=True)
     capacite = models.DecimalField(
         max_digits=20, decimal_places=2, null=True, blank=True
     )
@@ -84,14 +89,16 @@ class Infrastructure(models.Model):
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
     type_infrastructure = models.ForeignKey(
-        TypeInfrastructure, null=True, blank=True, on_delete=models.SET_NULL
+        TypeInfrastructure, null=True, blank=False, on_delete=models.SET_NULL
     )
-    client = models.ForeignKey(Client, null=True, blank=True, on_delete=models.SET_NULL)
     zone = models.ForeignKey(
         ZoneContributive, null=True, blank=True, on_delete=models.SET_NULL
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ("client", "nom")
 
     def __str__(self):
         return self.nom or f"Infrastructure {self.id}"
@@ -169,6 +176,7 @@ class Photo(models.Model):
 
     url = models.TextField()
     description = models.TextField(null=True, blank=True)
+    numero_photo = models.CharField(max_length=100, null=True, blank=True)
     date_prise = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

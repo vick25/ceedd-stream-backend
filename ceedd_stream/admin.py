@@ -51,17 +51,20 @@ admin.site.register(TypeInfrastructure, TypeInfrastructureAdmin)
 
 class ClientAdmin(admin.ModelAdmin):
     list_display = (
+        "titre",
         "nom",
         "postnom",
         "prenom",
         "quartier",
         "commune",
+        "engagement",
         "created_at",
         "updated_at",
     )
     search_fields = ("nom", "postnom", "prenom", "quartier", "commune")
     ordering = ("-updated_at",)
     list_display_links = ("nom", "prenom")
+    list_editable = ("engagement",)
     list_per_page = 10
 
 
@@ -102,19 +105,30 @@ class LocationAdminForm(forms.ModelForm):
 class InfrastructureAdmin(LeafletGeoAdmin):
     form = LocationAdminForm
     list_display = (
+        "client__nom",
         "nom",
         "type_infrastructure__nom",
-        "client__nom",
         "zone__nom",
         "latitude",
         "longitude",
+        "date_construction",
         "created_at",
         "updated_at",
     )
-    search_fields = ("nom", "type_infrastructure__nom", "client__nom", "zone__nom")
+    search_fields = (
+        "nom",
+        "date_construction",
+        "type_infrastructure__nom",
+        "client__nom",
+        "zone__nom",
+    )
     ordering = ("-updated_at",)
     list_display_links = ("nom", "client__nom")
-    list_filter = ("type_infrastructure", "zone")
+    list_filter = (
+        "type_infrastructure",
+        "zone",
+        "date_construction",
+    )
 
 
 class FinanceAdmin(admin.ModelAdmin):
@@ -149,8 +163,8 @@ admin.site.register(Inspection, InspectionAdmin)
 
 
 class PhotoAdmin(admin.ModelAdmin):
-    list_display = ("content_object", "url", "date_prise", "created_at")
-    search_fields = ("url", "description")
+    list_display = ("content_object", "url", "date_prise", "numero_photo", "created_at")
+    search_fields = ("url", "date_prise", "numero_photo")
     list_filter = ("content_type",)
     readonly_fields = ("content_type", "object_id", "content_object")
 
