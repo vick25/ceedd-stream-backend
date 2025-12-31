@@ -26,7 +26,7 @@ RUN pip install --upgrade pip && \
 # Copy project files
 COPY . .
 
-RUN chmod +x /entrypoint.sh
+# RUN chmod +x ./entrypoint.sh
 # COPY wait-for-db.sh /wait-for-db.sh
 # Make wait-for-db.sh executable
 # RUN chmod +x /wait-for-db.sh
