@@ -91,6 +91,12 @@ class ZoneContributiveSerializer(serializers.ModelSerializer):
 
 
 class InspectionSerializer(serializers.ModelSerializer):
+    infrastructure_id = serializers.PrimaryKeyRelatedField(
+        queryset=Infrastructure.objects.all(),
+        source="infrastructure",
+        write_only=True,
+    )
+
     class Meta:
         model = Inspection
         fields = "__all__"
