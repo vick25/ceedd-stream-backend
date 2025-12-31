@@ -26,6 +26,7 @@ RUN pip install --upgrade pip && \
 # Copy project files
 COPY . .
 
+RUN chmod +x /entrypoint.sh
 # COPY wait-for-db.sh /wait-for-db.sh
 # Make wait-for-db.sh executable
 # RUN chmod +x /wait-for-db.sh
@@ -33,6 +34,7 @@ COPY . .
 RUN python manage.py collectstatic --noinput
 
 # RUN rm ceedd_stream/migrations/00*.py
+EXPOSE 8000
 
 # CMD ["./wait-for-db.sh", "pg", "sh", "-c", "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
 CMD ["sh", "-c", "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
