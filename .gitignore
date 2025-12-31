@@ -238,3 +238,4 @@ media*/
 
 # Bash
 *.sh
+!entrypoint.sh
