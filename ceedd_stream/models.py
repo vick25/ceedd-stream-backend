@@ -55,8 +55,8 @@ class TypeInfrastructure(models.Model):
 
 class Client(models.Model):
     nom = models.CharField(max_length=255, null=False, blank=False)
-    postnom = models.CharField(max_length=255, null=True, blank=True)
-    prenom = models.CharField(max_length=255, null=True, blank=True)
+    postnom = models.CharField(max_length=255, null=False, blank=True, default="")
+    prenom = models.CharField(max_length=255, null=False, blank=True, default="")
     titre = models.CharField(max_length=100, null=True, blank=True)
     sexe = models.CharField(
         max_length=1, choices=[("M", "Masculin"), ("F", "Féminin")], blank=True
@@ -65,14 +65,22 @@ class Client(models.Model):
     numero = models.CharField(max_length=10, null=True, blank=True)
     quartier = models.CharField(max_length=255, null=True, blank=True)
     commune = models.CharField(max_length=255, null=True, blank=True)
+    province = models.CharField(max_length=255, null=True, blank=True)
     telephone = models.CharField(max_length=20, null=True, blank=True)
     email = models.EmailField(max_length=255, null=True, blank=True)
     engagement = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        unique_together = ("nom", "postnom", "prenom")
+
     def __str__(self):
         return f"{self.prenom} {self.nom}".strip()
+
+    @property
+    def full_name(self):
+        return f"{self.prenom} {self.postnom} {self.nom}".strip()
 
 
 class Infrastructure(models.Model):
@@ -120,7 +128,7 @@ class Finance(models.Model):
         Bailleur, related_name="finances", on_delete=models.CASCADE
     )
     infrastructure = models.ForeignKey(Infrastructure, on_delete=models.CASCADE)
-    date_financement = models.DateTimeField(default=timezone.now, null=True, blank=True)
+    date_financement = models.DateField(null=True, blank=True)
     montant = models.DecimalField(
         max_digits=20, decimal_places=2, null=True, blank=True
     )
@@ -131,6 +139,8 @@ class Finance(models.Model):
         null=True,
         blank=True,
     )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = ("bailleur", "infrastructure")
@@ -174,7 +184,7 @@ class Photo(models.Model):
         "content_type", "object_id"
     )  # actual object like Infrastructure(id=12)
 
-    url = models.TextField()
+    url = models.URLField(max_length=500)
     description = models.TextField(null=True, blank=True)
     numero_photo = models.CharField(max_length=100, null=True, blank=True)
     date_prise = models.DateField(null=True, blank=True)

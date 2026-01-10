@@ -1,49 +1,52 @@
+import glob
 import json
-from django.contrib.auth.models import User
-from rest_framework.decorators import action
-from django.http import HttpResponse
-from django.contrib.contenttypes.models import ContentType
+import os
+import tempfile
+import zipfile
+from datetime import datetime
+
 import fiona
+from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
+from django.db.models import Sum
+from django.http import HttpResponse
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import generics, status, viewsets
+from rest_framework.decorators import action, api_view
+from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.permissions import (
+    AllowAny,
+    IsAdminUser,
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly,
+)
+from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView
+
 from .models import (
-    ZoneContributive,
     Bailleur,
-    TypeInfrastructure,
     Client,
-    Infrastructure,
     Finance,
+    Infrastructure,
     Inspection,
     Photo,
     Shp,
+    TypeInfrastructure,
+    ZoneContributive,
 )
 from .serializers import (
-    UserSerializer,
-    ZoneContributiveSerializer,
     BailleurSerializer,
-    TypeInfrastructureSerializer,
     ClientSerializer,
-    InfrastructureSerializer,
     FinanceSerializer,
+    InfrastructureSerializer,
     InspectionSerializer,
     PhotoSerializer,
     ShpSerializer,
+    TypeInfrastructureSerializer,
+    UserSerializer,
+    ZoneContributiveSerializer,
 )
-from rest_framework import viewsets, generics, status
-from rest_framework.response import Response
-from rest_framework.permissions import (
-    IsAuthenticated,
-    AllowAny,
-    IsAuthenticatedOrReadOnly,
-    IsAdminUser,
-)
-from rest_framework_simplejwt.views import TokenObtainPairView
-
-from rest_framework.decorators import api_view
-from rest_framework.parsers import FormParser, MultiPartParser
-from django.db.models import Sum
-from datetime import datetime
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
-import os, glob, zipfile, tempfile
 
 
 # Create your views here.
@@ -74,6 +77,29 @@ class ClientViewSet(viewsets.ModelViewSet):
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
     lookup_field = "pk"
+
+    def create(self, request, *args, **kwargs):
+        """
+        Handles both single and multiple object creation.
+        """
+        # Check if the incoming data is a list
+        is_many = isinstance(request.data, list)
+
+        # Instantiate the serializer with many=True if it's a list
+        serializer = self.get_serializer(data=request.data, many=is_many)
+
+        # Validate the data
+        serializer.is_valid(raise_exception=True)
+
+        # Save the object(s)
+        self.perform_create(serializer)
+
+        # Prepare the success response
+        headers = self.get_success_headers(serializer.data)
+
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
 
 
 class FinanceViewSet(viewsets.ModelViewSet):
@@ -514,7 +540,6 @@ class UploadShapefileViewSet(viewsets.ModelViewSet):
         data = []
 
         for shp in self.queryset:
-
             file_path = shp.file.path
             bbox = None
             featurecollection = None

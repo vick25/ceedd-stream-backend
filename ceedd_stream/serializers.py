@@ -21,6 +21,7 @@ class FinanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Finance
         fields = "__all__"
+        depth = 1
 
 
 class BailleurSerializer(serializers.ModelSerializer):

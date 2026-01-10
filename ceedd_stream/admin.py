@@ -51,21 +51,20 @@ admin.site.register(TypeInfrastructure, TypeInfrastructureAdmin)
 
 class ClientAdmin(admin.ModelAdmin):
     list_display = (
+        "full_name",
         "titre",
-        "nom",
-        "postnom",
-        "prenom",
         "quartier",
         "commune",
+        "province",
         "engagement",
         "created_at",
         "updated_at",
     )
     search_fields = ("nom", "postnom", "prenom", "quartier", "commune")
     ordering = ("-updated_at",)
-    list_display_links = ("nom", "prenom")
+    list_display_links = ("full_name",)
     list_editable = ("engagement",)
-    list_per_page = 10
+    list_per_page = 15
 
 
 admin.site.register(Client, ClientAdmin)
@@ -129,6 +128,7 @@ class InfrastructureAdmin(LeafletGeoAdmin):
         "zone",
         "date_construction",
     )
+    list_per_page = 15
 
 
 class FinanceAdmin(admin.ModelAdmin):
@@ -137,9 +137,12 @@ class FinanceAdmin(admin.ModelAdmin):
         "bailleur__nom",
         "montant",
         "date_financement",
+        "created_at",
+        "updated_at",
     )
     search_fields = ("infrastructure__nom", "bailleur__nom")
     ordering = ("-date_financement",)
+    list_per_page = 15
 
 
 admin.site.register(Finance, FinanceAdmin)
@@ -157,16 +160,26 @@ class InspectionAdmin(admin.ModelAdmin):
     search_fields = ("infrastructure__nom", "inspecteur")
     ordering = ("-updated_at",)
     list_filter = ("etat",)
+    list_per_page = 15
 
 
 admin.site.register(Inspection, InspectionAdmin)
 
 
 class PhotoAdmin(admin.ModelAdmin):
-    list_display = ("content_object", "url", "date_prise", "numero_photo", "created_at")
+    list_display = (
+        "content_object",
+        "url",
+        "date_prise",
+        "numero_photo",
+        "created_at",
+        "updated_at",
+    )
     search_fields = ("url", "date_prise", "numero_photo")
+    ordering = ("-updated_at",)
     list_filter = ("content_type",)
     readonly_fields = ("content_type", "object_id", "content_object")
+    list_per_page = 20
 
 
 admin.site.register(Photo, PhotoAdmin)

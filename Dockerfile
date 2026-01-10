@@ -21,12 +21,12 @@ RUN apt-get update && \
 # Ensure static directory exists
 RUN mkdir -p /app/static
 
-# Copy requirements and install Python dependencies
+# Copy requirements first to leverage Docker cache
 COPY requirements.txt .
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Copy project files
+# Now copy the rest of the project files
 COPY . .
 
 # RUN chmod +x ./entrypoint.sh
@@ -34,10 +34,13 @@ COPY . .
 # Make wait-for-db.sh executable
 # RUN chmod +x /wait-for-db.sh
 
+# Make the entrypoint script executable
+RUN chmod +x /app/entrypoint.sh
+
 RUN python manage.py collectstatic --noinput
 
-# RUN rm ceedd_stream/migrations/00*.py
 EXPOSE 8000
 
 # CMD ["./wait-for-db.sh", "pg", "sh", "-c", "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
-CMD ["sh", "-c", "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
+# CMD ["sh", "-c", "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
+ENTRYPOINT ["/app/entrypoint.sh"]
