@@ -18,6 +18,9 @@ RUN apt-get update && \
     libgdal-dev \
     && rm -rf /var/lib/apt/lists/*
 
+# Ensure static directory exists
+RUN mkdir -p /app/static
+
 # Copy requirements and install Python dependencies
 COPY requirements.txt .
 RUN pip install --upgrade pip && \
