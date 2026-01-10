@@ -10,10 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
-from decouple import config, Csv
 from datetime import timedelta
-from django.core.management.utils import get_random_secret_key
 from pathlib import Path
+
+from decouple import Csv, config
+from django.core.management.utils import get_random_secret_key
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -104,6 +105,11 @@ DATABASES = {
         "PASSWORD": config("POSTGRES_PASSWORD", default="password"),
         "HOST": config("PG_HOST", default="localhost"),
         "PORT": config("PG_PORT", default="5432", cast=int),
+        "OPTIONS": {
+            "sslmode": "require",
+            "connect_timeout": 10,
+        },
+        "CONN_MAX_AGE": 60,
     }
 }
 
