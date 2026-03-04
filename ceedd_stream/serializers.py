@@ -18,14 +18,31 @@ from .models import (
 
 
 class FinanceSerializer(serializers.ModelSerializer):
+    bailleur = serializers.StringRelatedField()
+    infrastructure = serializers.StringRelatedField()
+
     class Meta:
         model = Finance
         fields = "__all__"
-        depth = 1
+        # depth = 1
+
+
+class FinanceNestedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Finance
+        fields = [
+            "id",
+            "date_financement",
+            "montant",
+            "unite_monnaie",
+            "created_at",
+            "modified_at",
+        ]
 
 
 class BailleurSerializer(serializers.ModelSerializer):
-    finances = FinanceSerializer(many=True, read_only=True)
+    # finances = FinanceSerializer(many=True, read_only=True)
+    finances = FinanceNestedSerializer(many=True, read_only=True)
 
     class Meta:
         model = Bailleur

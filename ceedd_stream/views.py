@@ -119,7 +119,7 @@ class InfrastructureViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
     lookup_field = "pk"
     filter_backends = [filters.SearchFilter]
-    search_fields = ["nom", "client__nom", "type_infrastructure__nom"]
+    search_fields = ["=nom", "client__nom", "type_infrastructure__nom"]
 
 
 class InspectionViewSet(viewsets.ModelViewSet):
