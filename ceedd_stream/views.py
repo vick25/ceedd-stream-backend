@@ -23,6 +23,7 @@ from rest_framework.permissions import (
 )
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework import filters
 
 from .models import (
     Bailleur,
@@ -117,6 +118,8 @@ class InfrastructureViewSet(viewsets.ModelViewSet):
     serializer_class = InfrastructureSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     lookup_field = "pk"
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["nom", "client__nom", "type_infrastructure__nom"]
 
 
 class InspectionViewSet(viewsets.ModelViewSet):
