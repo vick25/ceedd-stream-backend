@@ -28,15 +28,18 @@ class FinanceSerializer(serializers.ModelSerializer):
 
 
 class FinanceNestedSerializer(serializers.ModelSerializer):
+    infrastructure = serializers.StringRelatedField()
+
     class Meta:
         model = Finance
         fields = [
             "id",
+            "infrastructure",
             "date_financement",
             "montant",
             "unite_monnaie",
             "created_at",
-            "modified_at",
+            "updated_at",
         ]
 
 
